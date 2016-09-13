@@ -1,0 +1,42 @@
+// Graylog2 Extractors
+import org.graylog2.plugin.Message
+import java.util.regex.Matcher
+import java.util.regex.Pattern
+import java.text.DateFormat
+import java.text.ParseException
+
+// Fortigate
+rule "Fortigate source rewrite"
+ when
+  m : Message ( message matches ".+devname=.+\\sdevid=.+" )
+ then
+  Matcher matcher = Pattern.compile("^.+\\sdevname=(\\S+)\\s").matcher(m.getMessage());
+  if (matcher.find()) {
+   m.addField("source", matcher.group(1));
+  }
+
+  Matcher policyid = Pattern.compile("^.+\\spolicyid=(\\S+)\\s").matcher(m.getMessage());
+  if (policyid.find()) {
+   m.addField("policyid", policyid.group(1));
+  }
+
+  Matcher user = Pattern.compile("^.+\\suser=\"(\\S+)\"").matcher(m.getMessage());
+  if (user.find()) {
+   m.addField("user", user.group(1));
+  }
+  
+//Extraemos el campo level
+
+  Matcher level = Pattern.compile("^.+\\slevel=(\\S+)\\s").matcher(m.getMessage());
+  if (level.find()) {
+   m.addField("level", level.group(1));
+  }
+  
+//EXtraemos warning y borramos
+  
+  Matcher level = Pattern.compile("^.+\\slevel=warning\\s").matcher(m.getMessage());
+  if (level.find()) {
+   m.setFilterOut(true);
+  }
+end
+
