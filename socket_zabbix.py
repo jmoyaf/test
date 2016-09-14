@@ -1,4 +1,5 @@
 #!/usr/bin/env python                                                                                           
+#like zabbix_get
                                                                                                                 
 import socket                                                                                                   
 import struct                                                                                                   
